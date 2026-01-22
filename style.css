@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    text-align: center;
+    color: white;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.clock {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 60px 80px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.time {
+    font-size: 120px;
+    font-weight: 700;
+    letter-spacing: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.time span {
+    display: inline-block;
+    min-width: 130px;
+}
+
+.separator {
+    opacity: 1;
+    animation: blink 1s infinite;
+    min-width: 30px !important;
+}
+
+@keyframes blink {
+    0%, 49% {
+        opacity: 1;
+    }
+    50%, 100% {
+        opacity: 0.3;
+    }
+}
+
+.date {
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    opacity: 0.9;
+}
+
+#weekday {
+    margin-left: 20px;
+    font-weight: 400;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 1200px) {
+    .time {
+        font-size: 90px;
+    }
+    .time span {
+        min-width: 100px;
+    }
+    .date {
+        font-size: 28px;
+    }
+    .clock {
+        padding: 50px 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .time {
+        font-size: 60px;
+    }
+    .time span {
+        min-width: 70px;
+    }
+    .separator {
+        min-width: 20px !important;
+    }
+    .date {
+        font-size: 20px;
+    }
+    .clock {
+        padding: 40px 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .time {
+        font-size: 48px;
+        letter-spacing: 5px;
+    }
+    .time span {
+        min-width: 55px;
+    }
+    .date {
+        font-size: 16px;
+        letter-spacing: 2px;
+    }
+    .clock {
+        padding: 30px 25px;
+        border-radius: 20px;
+    }
+}
