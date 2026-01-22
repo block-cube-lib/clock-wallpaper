@@ -188,6 +188,7 @@ function createThreeCube() {
     // 初期の不透明度（フェードイン用）
     cube.material.opacity = 0;
     cube.fadeIn = true;
+    cube.fadeOut = false;
     
     scene.add(cube);
     cubes.push(cube);
@@ -215,18 +216,30 @@ function animate() {
         // 上昇
         cube.position.y += cube.floatSpeed;
         
-        // フェードイン
+        // フェードイン（画面下部で）
         if (cube.fadeIn && cube.material.opacity < 0.3) {
             cube.material.opacity += 0.005;
+            if (cube.material.opacity >= 0.3) {
+                cube.fadeIn = false;
+            }
         }
         
-        // 画面外に出たらリセット
-        if (cube.position.y > 15) {
+        // フェードアウト（画面上部で、リセット前に）
+        if (!cube.fadeIn && cube.position.y > 18) {
+            cube.material.opacity -= 0.01;
+            if (cube.material.opacity <= 0) {
+                cube.fadeOut = true;
+            }
+        }
+        
+        // 画面外に完全に出たらリセット（より高い位置でリセット）
+        if (cube.position.y > 25 || (cube.fadeOut && cube.material.opacity <= 0)) {
             cube.position.y = -10 - Math.random() * 5;
             cube.position.x = (Math.random() - 0.5) * 30;
             cube.position.z = -10 + Math.random() * 10;
             cube.material.opacity = 0;
             cube.fadeIn = true;
+            cube.fadeOut = false;
         }
     });
     
