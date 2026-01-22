@@ -8,8 +8,14 @@ if (currentTheme === 'dark') {
     body.classList.add('dark-mode');
 }
 
-// トグルボタンのクリックイベント
-themeToggle.addEventListener('click', () => {
+// テーマ切り替え関数
+function toggleTheme(event) {
+    // イベントの伝播を防止
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
     body.classList.toggle('dark-mode');
     
     // ローカルストレージに保存
@@ -18,7 +24,13 @@ themeToggle.addEventListener('click', () => {
     } else {
         localStorage.setItem('theme', 'light');
     }
-});
+}
+
+// クリックイベントとタッチイベントの両方に対応
+themeToggle.addEventListener('click', toggleTheme);
+themeToggle.addEventListener('touchend', (event) => {
+    toggleTheme(event);
+}, { passive: false });
 
 // 時計の更新関数
 function updateClock() {

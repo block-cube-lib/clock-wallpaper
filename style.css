@@ -36,8 +36,12 @@ body.dark-mode {
     justify-content: center;
     align-items: center;
     transition: all 0.3s ease;
-    z-index: 1000;
+    z-index: 9999;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .theme-toggle:hover {
@@ -54,6 +58,7 @@ body.dark-mode {
     position: absolute;
     color: white;
     transition: all 0.3s ease;
+    pointer-events: none;
 }
 
 .sun-icon {
@@ -174,6 +179,15 @@ body.dark-mode .clock {
     }
 }
 
+@media (max-width: 768px) {
+    .theme-toggle {
+        width: 55px;
+        height: 55px;
+        top: 20px;
+        right: 20px;
+    }
+}
+
 @media (max-width: 480px) {
     .time {
         font-size: 48px;
@@ -193,12 +207,12 @@ body.dark-mode .clock {
     .theme-toggle {
         width: 50px;
         height: 50px;
-        top: 20px;
-        right: 20px;
+        top: 15px;
+        right: 15px;
     }
     .sun-icon,
     .moon-icon {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
     }
 }
