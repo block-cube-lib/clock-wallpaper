@@ -95,3 +95,81 @@ updateBackgroundByTime();
 
 // 1分ごとに背景をチェック
 setInterval(updateBackgroundByTime, 60000);
+
+// 立方体アニメーションの初期化
+function createCube() {
+    const cube = document.createElement('div');
+    cube.className = 'cube';
+    
+    // 立方体の6つの面を作成
+    const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
+    faces.forEach(face => {
+        const faceDiv = document.createElement('div');
+        faceDiv.className = `cube-face ${face}`;
+        cube.appendChild(faceDiv);
+    });
+    
+    // ランダムな水平位置
+    const leftPosition = Math.random() * 100;
+    cube.style.left = `${leftPosition}%`;
+    cube.style.bottom = '-80px';
+    
+    // ランダムなサイズ（40px～80px）
+    const size = 40 + Math.random() * 40;
+    cube.style.width = `${size}px`;
+    cube.style.height = `${size}px`;
+    
+    // 各面のサイズを調整
+    const cubeFaces = cube.querySelectorAll('.cube-face');
+    cubeFaces.forEach(face => {
+        face.style.width = `${size}px`;
+        face.style.height = `${size}px`;
+        
+        // transformを更新
+        const halfSize = size / 2;
+        if (face.classList.contains('front')) {
+            face.style.transform = `rotateY(0deg) translateZ(${halfSize}px)`;
+        } else if (face.classList.contains('back')) {
+            face.style.transform = `rotateY(180deg) translateZ(${halfSize}px)`;
+        } else if (face.classList.contains('right')) {
+            face.style.transform = `rotateY(90deg) translateZ(${halfSize}px)`;
+        } else if (face.classList.contains('left')) {
+            face.style.transform = `rotateY(-90deg) translateZ(${halfSize}px)`;
+        } else if (face.classList.contains('top')) {
+            face.style.transform = `rotateX(90deg) translateZ(${halfSize}px)`;
+        } else if (face.classList.contains('bottom')) {
+            face.style.transform = `rotateX(-90deg) translateZ(${halfSize}px)`;
+        }
+    });
+    
+    // ランダムなアニメーション時間（8秒～15秒）
+    const duration = 8 + Math.random() * 7;
+    cube.style.animationDuration = `${duration}s`;
+    
+    // ランダムな遅延
+    const delay = Math.random() * 5;
+    cube.style.animationDelay = `${delay}s`;
+    
+    return cube;
+}
+
+function initCubes() {
+    const cubesBackground = document.getElementById('cubesBackground');
+    
+    // 15個の立方体を作成
+    for (let i = 0; i < 15; i++) {
+        const cube = createCube();
+        cubesBackground.appendChild(cube);
+        
+        // アニメーション終了後に再作成
+        cube.addEventListener('animationiteration', () => {
+            // 位置とタイミングをランダムに再設定
+            cube.style.left = `${Math.random() * 100}%`;
+            const duration = 8 + Math.random() * 7;
+            cube.style.animationDuration = `${duration}s`;
+        });
+    }
+}
+
+// ページ読み込み時に立方体を初期化
+initCubes();
