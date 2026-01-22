@@ -42,6 +42,70 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('touchend', (event) => {
         toggleTheme(event);
     }, { passive: false });
+    
+    // ハンバーガーメニューの設定
+    const menuToggle = document.getElementById('menuToggle');
+    const menuPanel = document.getElementById('menuPanel');
+    const menuClose = document.getElementById('menuClose');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const clearCacheBtn = document.getElementById('clearCache');
+    
+    // メニューを開く
+    function openMenu() {
+        menuPanel.classList.add('open');
+        menuOverlay.classList.add('open');
+    }
+    
+    // メニューを閉じる
+    function closeMenu() {
+        menuPanel.classList.remove('open');
+        menuOverlay.classList.remove('open');
+    }
+    
+    // キャッシュを削除
+    async function clearCache() {
+        try {
+            // Service Workerのキャッシュを削除
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            }
+            
+            // ローカルストレージをクリア
+            localStorage.clear();
+            
+            // Service Workerの登録を解除
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(registrations.map(registration => registration.unregister()));
+            }
+            
+            alert('キャッシュを削除しました。ページをリロードします。');
+            
+            // ページをリロード
+            window.location.reload(true);
+        } catch (error) {
+            console.error('キャッシュ削除エラー:', error);
+            alert('キャッシュの削除中にエラーが発生しました。');
+        }
+    }
+    
+    // イベントリスナー
+    menuToggle.addEventListener('click', openMenu);
+    menuClose.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    clearCacheBtn.addEventListener('click', () => {
+        if (confirm('キャッシュを削除してページをリロードしますか？')) {
+            clearCache();
+        }
+    });
+    
+    // ESCキーでメニューを閉じる
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menuPanel.classList.contains('open')) {
+            closeMenu();
+        }
+    });
 });
 
 // 時計の更新関数
