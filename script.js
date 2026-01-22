@@ -224,16 +224,23 @@ function animate() {
             }
         }
         
-        // フェードアウト（画面上部で、リセット前に）
-        if (!cube.fadeIn && cube.position.y > 18) {
-            cube.material.opacity -= 0.01;
-            if (cube.material.opacity <= 0) {
-                cube.fadeOut = true;
-            }
+        // 通常表示中はopacityを維持
+        if (!cube.fadeIn && !cube.fadeOut && cube.material.opacity < 0.3) {
+            cube.material.opacity = 0.3;
         }
         
-        // 画面外に完全に出たらリセット（より高い位置でリセット）
-        if (cube.position.y > 25 || (cube.fadeOut && cube.material.opacity <= 0)) {
+        // フェードアウト開始判定（画面上部に達したら）
+        if (!cube.fadeIn && !cube.fadeOut && cube.position.y > 20) {
+            cube.fadeOut = true;
+        }
+        
+        // フェードアウト処理
+        if (cube.fadeOut) {
+            cube.material.opacity -= 0.01;
+        }
+        
+        // 画面外に完全に出たらリセット
+        if (cube.position.y > 30 || (cube.fadeOut && cube.material.opacity <= 0)) {
             cube.position.y = -10 - Math.random() * 5;
             cube.position.x = (Math.random() - 0.5) * 30;
             cube.position.z = -10 + Math.random() * 10;
