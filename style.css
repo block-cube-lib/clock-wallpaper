@@ -218,65 +218,16 @@ body.dark-mode .clock {
     }
 }
 
-/* 立方体背景アニメーション */
-.cubes-background {
+/* Three.js Canvas */
+#cubesCanvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     z-index: 1;
     pointer-events: none;
 }
-
-.cube {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    transform-style: preserve-3d;
-    animation: float-up linear infinite;
-}
-
-@keyframes float-up {
-    0% {
-        transform: translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.7;
-    }
-    90% {
-        opacity: 0.7;
-    }
-    100% {
-        transform: translateY(-100vh) rotateX(720deg) rotateY(720deg) rotateZ(360deg);
-        opacity: 0;
-    }
-}
-
-.cube-face {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(5px);
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .cube-face {
-    background: rgba(102, 126, 234, 0.15);
-    border: 2px solid rgba(102, 126, 234, 0.4);
-    box-shadow: inset 0 0 20px rgba(102, 126, 234, 0.2);
-}
-
-.cube-face.front  { transform: rotateY(0deg) translateZ(30px); }
-.cube-face.back   { transform: rotateY(180deg) translateZ(30px); }
-.cube-face.right  { transform: rotateY(90deg) translateZ(30px); }
-.cube-face.left   { transform: rotateY(-90deg) translateZ(30px); }
-.cube-face.top    { transform: rotateX(90deg) translateZ(30px); }
-.cube-face.bottom { transform: rotateX(-90deg) translateZ(30px); }
 
 .container {
     z-index: 10;

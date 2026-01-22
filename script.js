@@ -96,80 +96,140 @@ updateBackgroundByTime();
 // 1分ごとに背景をチェック
 setInterval(updateBackgroundByTime, 60000);
 
-// 立方体アニメーションの初期化
-function createCube() {
-    const cube = document.createElement('div');
-    cube.className = 'cube';
+// Three.jsで3D立方体アニメーションを作成
+let scene, camera, renderer;
+let cubes = [];
+
+function initThreeJS() {
+    // シーン作成
+    scene = new THREE.Scene();
     
-    // 立方体の6つの面を作成
-    const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
-    faces.forEach(face => {
-        const faceDiv = document.createElement('div');
-        faceDiv.className = `cube-face ${face}`;
-        cube.appendChild(faceDiv);
+    // カメラ作成
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 15;
+    
+    // レンダラー作成
+    const canvas = document.getElementById('cubesCanvas');
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0); // 透明背景
+    
+    // ライト追加
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+    
+    // 立方体を作成
+    for (let i = 0; i < 20; i++) {
+        createThreeCube();
+    }
+    
+    // ウィンドウリサイズ対応
+    window.addEventListener('resize', onWindowResize);
+    
+    // テーマ変更時に立方体の色を更新
+    const observer = new MutationObserver(() => {
+        updateCubeColors();
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    
+    // アニメーション開始
+    animate();
+}
+
+function createThreeCube() {
+    // ランダムなサイズ（0.4～1.2）
+    const size = 0.4 + Math.random() * 0.8;
+    const geometry = new THREE.BoxGeometry(size, size, size);
+    
+    // マテリアル（透明で光沢のある）
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const color = isDarkMode ? 0x667eea : 0xffffff;
+    const material = new THREE.MeshPhongMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.3,
+        shininess: 100,
+        specular: 0x444444
     });
     
-    // ランダムな水平位置
-    const leftPosition = Math.random() * 100;
-    cube.style.left = `${leftPosition}%`;
-    cube.style.bottom = '-80px';
+    const cube = new THREE.Mesh(geometry, material);
     
-    // ランダムなサイズ（40px～80px）
-    const size = 40 + Math.random() * 40;
-    cube.style.width = `${size}px`;
-    cube.style.height = `${size}px`;
+    // ランダムな開始位置
+    cube.position.x = (Math.random() - 0.5) * 30;
+    cube.position.y = -10 - Math.random() * 5;
+    cube.position.z = -10 + Math.random() * 10;
     
-    // 各面のサイズを調整
-    const cubeFaces = cube.querySelectorAll('.cube-face');
-    cubeFaces.forEach(face => {
-        face.style.width = `${size}px`;
-        face.style.height = `${size}px`;
+    // ランダムな回転速度
+    cube.rotationSpeed = {
+        x: (Math.random() - 0.5) * 0.02,
+        y: (Math.random() - 0.5) * 0.02,
+        z: (Math.random() - 0.5) * 0.02
+    };
+    
+    // ランダムな上昇速度
+    cube.floatSpeed = 0.01 + Math.random() * 0.02;
+    
+    // 初期の不透明度（フェードイン用）
+    cube.material.opacity = 0;
+    cube.fadeIn = true;
+    
+    scene.add(cube);
+    cubes.push(cube);
+}
+
+function updateCubeColors() {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const color = isDarkMode ? 0x667eea : 0xffffff;
+    
+    cubes.forEach(cube => {
+        cube.material.color.setHex(color);
+    });
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // 各立方体を回転・移動
+    cubes.forEach(cube => {
+        // 回転
+        cube.rotation.x += cube.rotationSpeed.x;
+        cube.rotation.y += cube.rotationSpeed.y;
+        cube.rotation.z += cube.rotationSpeed.z;
         
-        // transformを更新
-        const halfSize = size / 2;
-        if (face.classList.contains('front')) {
-            face.style.transform = `rotateY(0deg) translateZ(${halfSize}px)`;
-        } else if (face.classList.contains('back')) {
-            face.style.transform = `rotateY(180deg) translateZ(${halfSize}px)`;
-        } else if (face.classList.contains('right')) {
-            face.style.transform = `rotateY(90deg) translateZ(${halfSize}px)`;
-        } else if (face.classList.contains('left')) {
-            face.style.transform = `rotateY(-90deg) translateZ(${halfSize}px)`;
-        } else if (face.classList.contains('top')) {
-            face.style.transform = `rotateX(90deg) translateZ(${halfSize}px)`;
-        } else if (face.classList.contains('bottom')) {
-            face.style.transform = `rotateX(-90deg) translateZ(${halfSize}px)`;
+        // 上昇
+        cube.position.y += cube.floatSpeed;
+        
+        // フェードイン
+        if (cube.fadeIn && cube.material.opacity < 0.3) {
+            cube.material.opacity += 0.005;
+        }
+        
+        // 画面外に出たらリセット
+        if (cube.position.y > 15) {
+            cube.position.y = -10 - Math.random() * 5;
+            cube.position.x = (Math.random() - 0.5) * 30;
+            cube.position.z = -10 + Math.random() * 10;
+            cube.material.opacity = 0;
+            cube.fadeIn = true;
         }
     });
     
-    // ランダムなアニメーション時間（8秒～15秒）
-    const duration = 8 + Math.random() * 7;
-    cube.style.animationDuration = `${duration}s`;
-    
-    // ランダムな遅延
-    const delay = Math.random() * 5;
-    cube.style.animationDelay = `${delay}s`;
-    
-    return cube;
+    renderer.render(scene, camera);
 }
 
-function initCubes() {
-    const cubesBackground = document.getElementById('cubesBackground');
-    
-    // 15個の立方体を作成
-    for (let i = 0; i < 15; i++) {
-        const cube = createCube();
-        cubesBackground.appendChild(cube);
-        
-        // アニメーション終了後に再作成
-        cube.addEventListener('animationiteration', () => {
-            // 位置とタイミングをランダムに再設定
-            cube.style.left = `${Math.random() * 100}%`;
-            const duration = 8 + Math.random() * 7;
-            cube.style.animationDuration = `${duration}s`;
-        });
-    }
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// ページ読み込み時に立方体を初期化
-initCubes();
+// ページ読み込み後にThree.jsを初期化
+if (typeof THREE !== 'undefined') {
+    window.addEventListener('load', initThreeJS);
+} else {
+    console.error('Three.js is not loaded');
+}
