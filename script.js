@@ -117,7 +117,7 @@ function initThreeJS() {
     scene = new THREE.Scene();
     
     // カメラ作成
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 15;
     
     // レンダラー作成
