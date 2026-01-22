@@ -1,3 +1,25 @@
+// ダークモード切り替え
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+
+// ローカルストレージからテーマを読み込み
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+}
+
+// トグルボタンのクリックイベント
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    
+    // ローカルストレージに保存
+    if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+    } else {
+        localStorage.setItem('theme', 'light');
+    }
+});
+
 // 時計の更新関数
 function updateClock() {
     const now = new Date();
@@ -34,8 +56,12 @@ setInterval(updateClock, 1000);
 
 // 背景のグラデーションを時間帯によって変更（オプション）
 function updateBackgroundByTime() {
+    // ダークモードの場合は時間帯による変更をスキップ
+    if (body.classList.contains('dark-mode')) {
+        return;
+    }
+    
     const hour = new Date().getHours();
-    const body = document.body;
     
     if (hour >= 6 && hour < 12) {
         // 朝（6時〜12時）

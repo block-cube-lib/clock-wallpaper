@@ -12,6 +12,68 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background 0.5s ease;
+}
+
+/* ダークモード */
+body.dark-mode {
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+}
+
+/* テーマ切り替えボタン */
+.theme-toggle {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.sun-icon,
+.moon-icon {
+    position: absolute;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.sun-icon {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+.moon-icon {
+    opacity: 0;
+    transform: rotate(180deg);
+}
+
+body.dark-mode .sun-icon {
+    opacity: 0;
+    transform: rotate(180deg);
+}
+
+body.dark-mode .moon-icon {
+    opacity: 1;
+    transform: rotate(0deg);
 }
 
 .container {
@@ -27,6 +89,13 @@ body {
     padding: 60px 80px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+body.dark-mode .clock {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .time {
@@ -120,5 +189,16 @@ body {
     .clock {
         padding: 30px 25px;
         border-radius: 20px;
+    }
+    .theme-toggle {
+        width: 50px;
+        height: 50px;
+        top: 20px;
+        right: 20px;
+    }
+    .sun-icon,
+    .moon-icon {
+        width: 20px;
+        height: 20px;
     }
 }
