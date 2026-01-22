@@ -1,36 +1,48 @@
-// ダークモード切り替え
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
-
-// ローカルストレージからテーマを読み込み
+// ローカルストレージからテーマを即座に読み込み（DOMの前に実行）
 const currentTheme = localStorage.getItem('theme');
 if (currentTheme === 'dark') {
-    body.classList.add('dark-mode');
+    document.documentElement.classList.add('dark-mode');
+    // bodyがまだ存在しない可能性があるため、DOMContentLoadedで再適用
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('dark-mode');
+    });
+} else if (currentTheme === 'light') {
+    // 明示的にライトモードが保存されている場合
+    document.documentElement.classList.remove('dark-mode');
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.remove('dark-mode');
+    });
 }
 
-// テーマ切り替え関数
-function toggleTheme(event) {
-    // イベントの伝播を防止
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
+// DOMContentLoaded後にテーマ切り替え機能を初期化
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    
+    // テーマ切り替え関数
+    function toggleTheme(event) {
+        // イベントの伝播を防止
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        body.classList.toggle('dark-mode');
+        
+        // ローカルストレージに保存
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
     }
     
-    body.classList.toggle('dark-mode');
-    
-    // ローカルストレージに保存
-    if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-    } else {
-        localStorage.setItem('theme', 'light');
-    }
-}
-
-// クリックイベントとタッチイベントの両方に対応
-themeToggle.addEventListener('click', toggleTheme);
-themeToggle.addEventListener('touchend', (event) => {
-    toggleTheme(event);
-}, { passive: false });
+    // クリックイベントとタッチイベントの両方に対応
+    themeToggle.addEventListener('click', toggleTheme);
+    themeToggle.addEventListener('touchend', (event) => {
+        toggleTheme(event);
+    }, { passive: false });
+});
 
 // 時計の更新関数
 function updateClock() {
@@ -227,9 +239,12 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// ページ読み込み後にThree.jsを初期化
-if (typeof THREE !== 'undefined') {
-    window.addEventListener('load', initThreeJS);
-} else {
-    console.error('Three.js is not loaded');
-}
+// Three.jsの初期化（DOMContentLoadedで実行してテーマを正しく読み込む）
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof THREE !== 'undefined') {
+        // テーマが適用された後に初期化
+        setTimeout(initThreeJS, 0);
+    } else {
+        console.error('Three.js is not loaded');
+    }
+});
